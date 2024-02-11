@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "pc-api-4992661408068437498-868",
+  "private_key_id": "19155efd426ff15aae768ca672bf84e5eeb0862b",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDxQCeQTJjHcXtl\npG31DuCxaOQ8m1pSdiR2yRc6AWCHqjO8kbNmMy6pniOnj1e7Iw6af6yqCOnD5k2/\n9R6Yr/ItAZDu1cfpIYhOKY8/snrBw+POHcs0O2A/qHSzN4xJUX/FnOWZUdqG9wrc\nlsP0rNDd5yzjrHhWLO6zur1cEWHWrf5INeHIDHXZdQTZLx8ZcVTFjUT/vrSio+3c\nsL/WNYvl/veqoqnxurwy3ogBYvwutAR/R6PwAC1xDuG3TOHK6q9J+n/wTrqo/LOh\nq/uHU7+frhIxmZ8RTvcE/Om1fm4RM1DMn7a/DtGq0VQF/SDdG6L/++w68yPPBVys\ngm6aDJ/rAgMBAAECggEAAeEUjdCy7fbJ1chanOqRQICHKpuxL+xAq3Y0ipyhIl1m\nisT9x0GFzwdu0qrQraH/xp9Q+oAYRhDgsSqZIupX8hbNiLa8mGnM9ILpXT8oKqM6\nfowH3a/Kt6Q5yH2Zx6ZtXt4ygae8EooRGRfJjfncpKXc2ScqRs2RzG+bcwClqPTt\nIxX8idUSw0mVmZTRZxtguMNN4KS/yqGeOgtf4vyBZjoQV3vwIPxqSUabOJOMnp5F\nvEE+378crYdSrKq2TmXTiIdhsztkigLR36gBcpmUG3uDu9ILr9nsNyJ6QXpgrJzo\nb1UTffRslWxDiAI/OX7xML5zvQeIcyyk1I2zMQIatQKBgQD/xhMWeBW3RZ7Nplqh\n0vTFPZBwYCDig3duSnUZMAI9SRtRpJlKsaWTQ22Z6bufPj9GBMtR47YHv2GghFAs\nSsYonlW8jkI+UacpM26Sv8apAOK1pqbDoRTYfr7U5qweRjGLQjlqtpV0jofrqyts\nPY4OkNM3sWxmcH8zgGEaiH+EzQKBgQDxdsp5KYuiEEcaR+7TEHAcH2sVVtcFVOBY\noDktnTpijh1IebxXA6Iv3DA9/DAqdSYWOM1+bpWoAWjz+mDD/PEo9+jZI9HtuLCd\nf5ng1BMgnnuE/mWwnU3k059r1cZzZuwvOulEvw0G7zsjhE0zX4g4knDs9jWDGEV4\nDgbg4IJ3lwKBgBOjecO35LL1vYO8yiiyseiTGYwHVX8O6RSm0ubkMMfT3S0fnkWF\n7lioTLoMoENR3DncFGBtQ4TExRI2FpHQC/cCcULRCXUPf+5B7LOH1hET6FRaP2O1\n8ovM74oZTA3nBdbTduUir8cLSpRlyCe/cjDcHdug29nhuWKS8OHAqUnhAoGBAIrk\n6/7aGQn2FxBVBFnAgNyMbgpuU20rr4kLURid8nGykcGY1O+wlWC2ZcGiCQrDLE9o\nCTyK2+cyOG7vPS4/l3EbeYM+CYmWzXErbxZWp1ICF8celtwLAD16RZ+/7lF/iKh6\nWKhExXeRsRDzD31XnIH+KpsD3TA1i/BNEUPVoPatAoGAU671rGhHNz7J9GsoNMLQ\nuYexEdgkf3VGETC+AhBMzHe2t1jeghLiF3mXdj1sQrR6QBSxS01ws3zTO9jtT/2p\njYaMMkYaH4v/8PT28FcaKmcpVhKuNC+BmKEYkTn/KtUaD4btuiLCtJ8J99F/i/kQ\n7M2taSQZA9GMKKJcLtkuAGI=\n-----END PRIVATE KEY-----\n",
+  "client_email": "pilbarafireservice@pc-api-4992661408068437498-868.iam.gserviceaccount.com",
+  "client_id": "116704805252017843180",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/pilbarafireservice%40pc-api-4992661408068437498-868.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

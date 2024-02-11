@@ -1,0 +1,944 @@
+/* eslint-disable react/prop-types */
+import PropTypes from "prop-types";
+import React from "react";
+import { Keyboard, TouchableWithoutFeedback } from "react-native";
+import styled from "styled-components/native";
+
+export const DismissKeyboard = ({ children }) => {
+  return (
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      {children}
+    </TouchableWithoutFeedback>
+  );
+};
+
+DismissKeyboard.propTypes = {
+  children: PropTypes.any,
+};
+
+export const CountryBox = () => {
+  return (
+    <CountryBoxWrapper>
+      <CountryCodeEmoji>🇦🇺</CountryCodeEmoji>
+      <BodyText>Australia</BodyText>
+    </CountryBoxWrapper>
+  );
+};
+
+export const PhoneNumberInput = ({ children }) => {
+  return (
+    <PhoneNumberInputWrapper>
+      <BodyText>+61</BodyText>
+      <Space w="16px" />
+      <HorizontalInputDivider />
+      {children}
+    </PhoneNumberInputWrapper>
+  );
+};
+
+PhoneNumberInput.propTypes = {
+  children: PropTypes.any,
+};
+
+export const ButtonCta = (props) => {
+  return (
+    <ButtonCtaWrapper {...props}>
+      <ButtonCtaText numberOfLines={1}>{props.children}</ButtonCtaText>
+    </ButtonCtaWrapper>
+  );
+};
+
+export const FillView = styled.View`
+  flex: 1;
+`;
+
+export const ButtonCtaText = styled.Text`
+  font-family: "Inter_600SemiBold";
+  font-size: 16px;
+  align-items: center;
+  text-align: center;
+  color: #ffffff;
+`;
+
+export const ButtonCtaWrapper = styled.TouchableOpacity`
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  background: #000000;
+  border-radius: 10px;
+`;
+
+export const HeadingText = styled.Text`
+  font-family: Inter_400Regular;
+  font-size: 30px;
+  margin-bottom: 12px;
+`;
+
+export const Space = styled.View`
+  height: ${(props) => props.h || "0px"};
+  width: ${(props) => props.w || "0px"};
+`;
+
+export const PageContainer = styled.KeyboardAvoidingView`
+  flex: 1;
+  background-color: white;
+  padding-horizontal: 20px;
+  padding-vertical: 30px;
+`;
+
+export const PhoneNumberTextInput = styled.TextInput`
+  font-family: Inter_400Regular;
+  font-size: 18px;
+  flex: 1;
+  color: rgba(0, 0, 0, 0.5);
+`;
+
+const PhoneNumberInputWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+  padding-vertical: 16px;
+`;
+
+const CountryBoxWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+  padding-vertical: 6px;
+`;
+
+const CountryCodeEmoji = styled.Text`
+  font-family: Inter_500Medium;
+  font-size: 32px;
+  margin-right: 16px;
+`;
+
+const BodyText = styled.Text`
+  font-family: Inter_400Regular;
+  font-size: 18px;
+`;
+
+export const VerticalDivider = styled.View`
+  border-bottom-color: #d8dadc;
+  border-bottom-width: 1px;
+`;
+
+const HorizontalInputDivider = styled.View`
+  height: 24px;
+  border-right-color: #d8dadc;
+  border-right-width: 1px;
+`;
+
+export const SubtitleText = styled.Text`
+  font-family: Inter_400Regular;
+  font-size: 18px;
+  color: rgba(0, 0, 0, 0.7);
+`;
+
+import React, { useState } from "react";
+import {
+  HeadingText,
+  SubtitleText,
+  VerticalDivider,
+  CountryBox,
+  PhoneNumberInput,
+  PhoneNumberTextInput,
+  PageContainer,
+  Space,
+  DismissKeyboard,
+  ButtonCta,
+  FillView,
+} from "../auth/components";
+import supabase from "../../../supabase";
+
+const App = () => {
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const signIn = async () => {
+    
+    setLoading(true);
+    const { data, error } = await supabase.auth.signInWithOtp({
+      phone: `+61${phoneNumber}`,
+    });
+    if (error) {
+      
+    }
+    if (data) {
+      
+    }
+
+    setLoading(false);
+  };
+
+  return (
+    <DismissKeyboard>
+      <PageContainer behavior="padding">
+        <HeadingText>Get started</HeadingText>
+        <Space h="12px" />
+
+        <SubtitleText>
+          Please confirm your country code and enter your phone number.
+        </SubtitleText>
+        <Space h="24px" />
+
+        <VerticalDivider />
+        <CountryBox />
+
+        <VerticalDivider />
+        <PhoneNumberInput>
+          <Space w="12px" />
+          <PhoneNumberTextInput
+            value={phoneNumber}
+            onChangeText={(text) => setPhoneNumber(text)}
+            placeholder="430902942"
+            keyboardAppearance="dark"
+            inputMode="numeric"
+            keyboardType="numeric"
+          />
+        </PhoneNumberInput>
+
+        <VerticalDivider />
+        <FillView />
+        <ButtonCta
+          disabled={loading}
+          onPress={signIn}
+        >
+          {loading ? "Loading..." : "Continue"}
+        </ButtonCta>
+        <Space h="24px" />
+      </PageContainer>
+    </DismissKeyboard>
+  );
+};
+
+export default App;
+
+import React, { useState, useEffect } from 'react';
+import {
+	StyleSheet,
+	View,
+	Text,
+	Dimensions,
+	TouchableOpacity,
+} from 'react-native';
+
+import MapView, { Polygon } from 'react-native-maps';
+
+const { width, height } = Dimensions.get('window');
+
+const ASPECT_RATIO = width / height;
+const LATITUDE = -31.953512;
+const LONGITUDE = 115.857048;
+const LATITUDE_DELTA = 0.0922;
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+let id = 0;
+
+const PolygonCreator = () => {
+	const [region] = useState({
+		latitude: LATITUDE,
+		longitude: LONGITUDE,
+		latitudeDelta: LATITUDE_DELTA,
+		longitudeDelta: LONGITUDE_DELTA,
+	});
+	const [polygons, setPolygons] = useState([]);
+	const [editing, setEditing] = useState(null);
+	const [creatingHole, setCreatingHole] = useState(false);
+	const [mapOptions, setMapOptions] = useState({
+		scrollEnabled: true,
+	});
+
+	const finish = () => {
+		setPolygons([...polygons, editing]);
+		setEditing(null);
+		setCreatingHole(false);
+	};
+
+	const createHole = () => {
+		if (!creatingHole) {
+			setCreatingHole(true);
+			setEditing({
+				...editing,
+				holes: [...editing.holes, []],
+			});
+		} else {
+			const holes = [...editing.holes];
+			if (holes[holes.length - 1].length === 0) {
+				holes.pop();
+				setEditing({
+					...editing,
+					holes,
+				});
+			}
+			setCreatingHole(false);
+		}
+	};
+
+	const onPressMap = (e) => {
+		if (!editing) {
+			setEditing({
+				id: id++,
+				coordinates: [e.nativeEvent.coordinate],
+				holes: [],
+			});
+		} else if (!creatingHole) {
+			setEditing({
+				...editing,
+				coordinates: [...editing.coordinates, e.nativeEvent.coordinate],
+			});
+		} else {
+			const holes = [...editing.holes];
+			holes[holes.length - 1] = [
+				...holes[holes.length - 1],
+				e.nativeEvent.coordinate,
+			];
+			setEditing({
+				...editing,
+				id: id++, // keep incrementing id to trigger display refresh
+				coordinates: [...editing.coordinates],
+				holes,
+			});
+		}
+	};
+
+	useEffect(() => {
+		if (editing) {
+			setMapOptions({ scrollEnabled: false, onPanDrag: (e) => onPressMap(e) });
+		}
+		
+		
+		
+		
+	}, [editing]);
+
+	return (
+		<View style={styles.container}>
+			<MapView
+				style={styles.map}
+				mapType={'satellite'}
+				initialRegion={region}
+				showsPointsOfInterest={false}
+				showsBuildings={false}
+				showsTraffic={false}
+				onPress={(e) => onPressMap(e)}
+				{...mapOptions}
+			>
+				{polygons.map((polygon, index) => (
+					<Polygon
+						key={index}
+						coordinates={polygon.coordinates}
+						holes={polygon.holes}
+						strokeColor="#F00"
+						fillColor="rgba(255,0,0,0.5)"
+						strokeWidth={1}
+					/>
+				))}
+				{editing && (
+					<Polygon
+						key={editing.id}
+						coordinates={editing.coordinates}
+						holes={editing.holes}
+						strokeColor="rgba(0,0,0,0.5)"
+						fillColor="rgba(0,0,0,0.3)"
+						strokeWidth={3}
+						lineJoin="bevel"
+					/>
+				)}
+			</MapView>
+			<View style={styles.buttonContainer}>
+				{editing && (
+					<TouchableOpacity
+						onPress={() => createHole()}
+						style={[styles.bubble, styles.button]}
+					>
+						<Text>{creatingHole ? 'Finish Hole' : 'Create Hole'}</Text>
+					</TouchableOpacity>
+				)}
+				{editing && (
+					<TouchableOpacity
+						onPress={() => finish()}
+						style={[styles.bubble, styles.button]}
+					>
+						<Text>Finish</Text>
+					</TouchableOpacity>
+				)}
+			</View>
+		</View>
+	);
+};
+
+const styles = StyleSheet.create({
+	container: {
+		...StyleSheet.absoluteFillObject,
+		justifyContent: 'flex-end',
+		alignItems: 'center',
+	},
+	map: {
+		...StyleSheet.absoluteFillObject,
+	},
+	bubble: {
+		backgroundColor: 'rgba(255,255,255,0.7)',
+		paddingHorizontal: 18,
+		paddingVertical: 12,
+		borderRadius: 20,
+	},
+	latlng: {
+		width: 200,
+		alignItems: 'stretch',
+	},
+	button: {
+		width: 80,
+		paddingHorizontal: 12,
+		alignItems: 'center',
+		marginHorizontal: 10,
+	},
+	buttonContainer: {
+		flexDirection: 'row',
+		marginVertical: 20,
+		backgroundColor: 'transparent',
+	},
+});
+
+export default PolygonCreator;
+
+			{/* <ButtonWrapper
+				onPress={() => {
+					setActive(0);
+				}}
+			>
+				<ToggleButton active={active === 0}>
+					<Feather name="navigation" size={28} color={colors.accents_4} />
+				</ToggleButton>
+			</ButtonWrapper>
+			<ButtonWrapper onPress={() => setActive(1)}>
+				<ToggleButton active={active === 1}>
+					<Octicons name="pencil" size={28} color={colors.accents_4} />
+				</ToggleButton>
+			</ButtonWrapper>
+			<ButtonWrapper onPress={() => setActive(2)}>
+				<ToggleButton active={active === 2}>
+					<Feather name="move" size={28} color={colors.accents_4} />
+				</ToggleButton>
+			</ButtonWrapper> */}
+
+			import React, { useState } from 'react';
+import { Input, Button, Text, Avatar } from '@geist';
+import { Stack } from '@mobily/stacks';
+import { View } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+
+import { useStore } from '@db';
+// import reactotron from 'reactotron-react-native';
+
+const UpdatePicture = () => {
+	const user = useStore((state) => state.userData);
+	const profilePictureUpdateLoading = useStore(
+		(state) => state.profilePictureUpdateLoading
+	);
+
+	const updateProfilePicture = useStore((state) => state.updateProfilePicture);
+
+	const [image, setImage] = useState(null);
+	const [base64, setBase64] = useState(null);
+	const [imageExtension, setImageExtension] = useState(null);
+
+	const pickImage = async () => {
+		// No permissions request is necessary for launching the image library
+		let result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.All,
+			allowsEditing: true,
+			aspect: [1, 1],
+			quality: 0.05,
+			base64: true,
+		});
+
+		
+
+		if (!result.canceled) {
+			setImage(result.assets[0].uri);
+			setBase64(result.assets[0].base64);
+			setImageExtension(result.assets[0].uri.split('.').pop());
+		}
+	};
+
+	return (
+		<View style={{ flexDirection: 'row' }}>
+			{!image && <Avatar source={{ uri: user.avatar_url }} width={128} />}
+			{image && <Avatar source={{ uri: image }} width={128} />}
+			<View
+				style={{
+					paddingLeft: 24,
+					flex: 1,
+					justifyContent: 'center',
+				}}
+			>
+				{image ? (
+					<Button
+						type="success"
+						onPress={() => {
+							updateProfilePicture({
+								base64: base64,
+								userId: user.id,
+								imageExtension: imageExtension,
+							});
+						}}
+						loading={profilePictureUpdateLoading}
+					>
+						Save picture as profile picture
+					</Button>
+				) : (
+					<Button onPress={pickImage}>Open camera roll</Button>
+				)}
+			</View>
+		</View>
+	);
+};
+
+const App = () => {
+	const user = useStore((state) => state.userData);
+	const [newFullName, setNewFullName] = useState(user.full_name);
+	const [newUsername, setNewUsername] = useState(user.username);
+	const [usernameError, setUsernameError] = useState(null);
+
+	const showUpdateButton =
+		!usernameError &&
+		(newFullName !== user.full_name || newUsername !== user.username);
+
+	const checkUsername = (username) => {
+		if (username.length < 4) {
+			setUsernameError('be 4 characters or more');
+		} else if (username.length > 20) {
+			setUsernameError('be 20 characters or less');
+		} else if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+			setUsernameError('only contain letters, numbers, and underscores');
+		} else if (/^_|_$/.test(username)) {
+			setUsernameError('not contain underscores at the beginning or end');
+		} else if (/__/.test(username)) {
+			setUsernameError('not contain two underscores in a row');
+		} else if (/\s/.test(username)) {
+			setUsernameError('not contain spaces');
+		} else {
+			setUsernameError(null);
+		}
+	};
+
+	return (
+		<Stack space={4} padding={4}>
+			<UpdatePicture />
+			<Stack space={2}>
+				<Text h6>Full name</Text>
+				<Input
+					value={newFullName}
+					onChangeText={(text) => {
+						setNewFullName(text);
+					}}
+				/>
+			</Stack>
+
+			<Stack space={2}>
+				<Text h6>Username</Text>
+				<Input
+					value={`@${newUsername}`}
+					onChangeText={(text) => {
+						checkUsername(text.replace('@', '').replace(' ', '').toLowerCase());
+						setNewUsername(
+							text.replace('@', '').replace(' ', '').toLowerCase()
+						);
+					}}
+				/>
+			</Stack>
+			<Text>{usernameError && '⚠️  Username must ' + usernameError} </Text>
+			{showUpdateButton && <Button type="success">Update</Button>}
+		</Stack>
+	);
+};
+
+export default App;
+
+import React, { useState } from 'react';
+import { View, Switch } from 'react-native';
+import { colors } from '@geist';
+
+const successColor = colors.success;
+
+const BlueSwitch = ({ onSwitchChange }) => {
+	const [isEnabled, setIsEnabled] = useState(false);
+
+	const toggleSwitch = () => {
+		setIsEnabled((previousState) => !previousState);
+		onSwitchChange(!isEnabled);
+	};
+
+	return (
+		<View>
+			<Switch
+				trackColor={{ false: '#767577', true: successColor }}
+				thumbColor={isEnabled ? '#fff' : '#fff'}
+				ios_backgroundColor="#3e3e3e"
+				onValueChange={toggleSwitch}
+				value={isEnabled}
+			/>
+		</View>
+	);
+};
+
+export default BlueSwitch;
+
+// import Map from '@pages/map';
+// import DashboardPage from '@pages/dashboard';
+// import CreateMap from '@pages/dashboard/admin/create-map';
+// import CreateTeam from '@pages/dashboard/admin/manage-team';
+// import EditProfile from '@pages/dashboard/admin/edit-profile';
+// import MapPolygonTest from '@pages/dashboard/admin/select-area';
+// import ProjectsList from '@pages/dashboard/admin/view-projects';
+
+			{/* <DashNav.Screen
+				name="Dashboard"
+				component={DashboardPage}
+				options={{
+					headerTitle: 'Dashboard',
+					headerShown: true,
+					headerLargeTitle: true,
+				}}
+			/>
+			<DashNav.Screen
+				name="EditProfile"
+				component={EditProfile}
+				options={{
+					headerTitle: 'Edit Profile',
+					headerShown: true,
+				}}
+			/>
+			<DashNav.Screen
+				name="ProjectsList"
+				component={ProjectsList}
+				options={{
+					headerTitle: 'All projects',
+					headerLargeTitle: true,
+					headerShown: true,
+				}}
+			/>
+			<DashNav.Screen
+				name="CreateMap"
+				component={CreateMap}
+				options={{
+					headerTitle: 'Create new map',
+				}}
+			/>
+			<DashNav.Screen
+				name="MapPolygonTest"
+				component={MapPolygonTest}
+				options={{
+					headerTitle: 'Select area',
+					headerBackTitleVisible: false,
+				}}
+			/>
+
+			<DashNav.Screen
+				name="ManageTeam"
+				component={CreateTeam}
+				options={{
+					presentation: 'modal',
+					headerShown: true,
+					headerTitle: 'Manage Team',
+					headerStyle: { backgroundColor: '#111' },
+					headerTintColor: '#fff',
+					// hide thee header birder
+					headerTransparent: true,
+					headerTitleStyle: {
+						color: '#fff',
+					},
+				}}
+			/>
+			<DashNav.Screen
+				name="Map"
+				component={Map}
+				options={{
+					headerShown: false,
+				}}
+			/> */}
+
+			/*
+const fontFamily = {
+	b: "Inter800",
+	h1: "Inter900",
+	h2: "Inter700",
+	h3: "Iner600",
+	h4: "Inter600",
+	h5: "Inter600",
+	h6: "Inter600",
+	small: "Inter400",
+	p: "Inter600",
+};
+
+const fontWeight = {
+	b: "800",
+	h1: "900",
+	h2: "700",
+	h3: "600",
+	h4: "600",
+	h5: "600",
+	h6: "600",
+	small: "400",
+	p: "400",
+};
+
+const fontSize = {
+	b: "16px",
+	h1: "48px",
+	h2: "36px",
+	h3: "24px",
+	h4: "20px",
+	h5: "16px",
+	h6: "14px",
+	small: "14px",
+	p: "18px",
+};
+
+const lineHeight = {
+	h1: "72px",
+	h2: "54px",
+	h3: "36px",
+	h4: "30px",
+	h5: "24px",
+	h6: "21px",
+	small: "21px",
+	p: "24px",
+};
+
+export const Text2 = styled.div`
+	// font-family: ${fontFamily[props.style]};
+	font-weight: ${fontWeight[props.style]};
+	font-size: ${fontSize[props.style]};
+	line-height: ${lineHeight[props.style]};
+`;
+<>
+font sizes:
+h1: 48px,
+h2: 36px,
+h3: 24px,
+h4: 20px,
+h5: 16px,
+h6: 14px,
+<Text h1> The quick brown fox jumps over the lazy dog </Text>
+<Text h2> The  quick brown fox jumps over the lazy dog </Text>
+<Text h3> The quick brown fox jumps over the lazy dog </Text>
+<Text h4> The quick brown fox jumps over the lazy dog </Text>
+<Text h5> The quick brown fox jumps over the lazy dog </Text>
+<Text h6> The quick brown fox jumps over the lazy dog </Text>
+<Text p> The quick brown fox jumps over the lazy dog </Text>
+<Text b> The quick brown fox jumps over the lazy dog </Text>
+<Text small> The quick brown fox jumps over the lazy dog </Text>
+<Text i> The quick brown fox jumps over the lazy dog </Text>
+<Text span> The quick brown fox jumps over the lazy dog </Text>
+<Text del> The quick brown fox jumps over the lazy dog </Text>
+<Text em> The quick brown fox jumps over the lazy dog </Text>
+<Text blockquote> The quick brown fox jumps over the lazy dog </Text>
+</>
+*/
+
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
+import MapView from 'react-native-maps';
+import reactotron from 'reactotron-react-native';
+import { Stack, Tiles } from '@mobily/stacks';
+import { ScrollView } from 'react-native';
+import { TileCard } from '@src/geist/custom/tile-card';
+import { Octicons } from '@expo/vector-icons';
+import supabase from '@db';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Text, ButtonWrapper, colors, Padding, Inset } from '@geist';
+
+const App = ({ navigation }) => {
+	const [loadingSignOut, setLoadingSignOut] = useState(false);
+
+	return (
+		<ScrollView style={{ flex: 1, backgroundColor: 'black' }}>
+			<Padding pt={`${84 + 16}px`} />
+
+			<Stack space={4} padding={4}>
+				<ButtonWrapper onPress={() => navigation.navigate('Map')}>
+					<MapView
+						style={{
+							aspectRatio: 3,
+							borderRadius: 8,
+							overflow: 'hidden',
+						}}
+						legalLabelInsets={{ right: -10000 }}
+						userInterfaceStyle="dark"
+						initialCamera={{
+							center: {
+								latitude: -31.014,
+								longitude: 115.33,
+							},
+							pitch: 0,
+							heading: 0,
+							altitude: 1500,
+						}}
+						mapType="satellite"
+						onMarkerDrag={(e) => {
+							reactotron.log(e);
+						}}
+					>
+						<LinearGradient
+							style={{
+								flex: 1,
+								padding: 8,
+								alignItems: 'center',
+								justifyContent: 'center',
+							}}
+							colors={['rgba(0,0,0,0.8)', 'rgba(0,0,0,0.5)']}
+							// make it horizontal
+							start={{ x: 0, y: 0 }}
+						>
+							<Text h3>Tap here to create a plan</Text>
+						</LinearGradient>
+					</MapView>
+				</ButtonWrapper>
+				<Tiles paddingTop={1} columns={2} space={6}>
+					<TileCard
+						text="Blah blah blah"
+						icon={<Octicons name="people" size={24} color={colors.accents_4} />}
+						buttonText="Manage team"
+						onPress={() => navigation.navigate('CreateTeam')}
+					/>
+					<TileCard
+						text="Not enjoying it here? You can sign out here!"
+						iconType={Octicons}
+						iconName="link-external"
+						buttonText="Sign out"
+						buttonLoading={loadingSignOut}
+						onPress={async () => {
+							setLoadingSignOut(true);
+							await supabase.auth.signOut();
+							setLoadingSignOut(false);
+						}}
+					/>
+				</Tiles>
+			</Stack>
+			<Inset />
+		</ScrollView>
+	);
+};
+
+export default App;
+
+App.propTypes = {
+	navigation: PropTypes.shape({
+		navigate: PropTypes.func,
+	}),
+};
+
+import reactotron from 'reactotron-react-native';
+import PropTypes from 'prop-types';
+import React from 'react';
+import MapView from 'react-native-maps';
+import { Stack, Tiles } from '@mobily/stacks';
+import { ScrollView } from 'react-native';
+import { TileCard } from '@src/geist/custom/tile-card';
+import { UserCardInfo } from '@src/geist/custom/user-card/';
+import { Octicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
+
+import { useStore } from '@db';
+
+import { Text, ButtonWrapper, colors, Padding, Inset, Button } from '@geist';
+
+const App = () => {
+	const user = useStore((state) => state.userData);
+	const loadingSignOut = useStore((state) => state.userLoading);
+	const signOut = useStore((state) => state.signOut);
+	const navigation = useNavigation();
+	reactotron.log('ADMIN DASHBOARD LOADED');
+
+	return (
+		<ScrollView
+			style={{ flex: 1, backgroundColor: 'black' }}
+			showsVerticalScrollIndicator={false}
+		>
+			<Padding pt={`${84 + 16}px`} />
+
+			<Stack space={4} padding={4}>
+				<ButtonWrapper onPress={() => navigation.navigate('CreateMap')}>
+					<MapView
+						style={{
+							aspectRatio: 2,
+							borderRadius: 8,
+							overflow: 'hidden',
+						}}
+						legalLabelInsets={{ right: -10000 }}
+						userInterfaceStyle="dark"
+						initialCamera={{
+							center: {
+								latitude: -31.014,
+								longitude: 115.33,
+							},
+							pitch: 0,
+							heading: 0,
+							altitude: 1500,
+						}}
+						mapType="satellite"
+					>
+						<LinearGradient
+							style={{
+								flex: 1,
+								padding: 8,
+								alignItems: 'center',
+								justifyContent: 'center',
+							}}
+							colors={['rgba(0,0,0,0.8)', 'rgba(0,0,0,0.5)']}
+							// make it horizontal
+							start={{ x: 0, y: 0 }}
+						>
+							<Text h3>Tap here to create a plan</Text>
+						</LinearGradient>
+					</MapView>
+				</ButtonWrapper>
+				<Tiles paddingTop={1} columns={2} space={6}>
+					<TileCard
+						text="Add, remove and edit your team"
+						buttonLoading={loadingSignOut}
+						icon={<Octicons name="people" size={24} color={colors.accents_4} />}
+						buttonText="Manage team"
+						onPress={() => navigation.navigate('ManageTeam')}
+					/>
+					<TileCard
+						text="See a list of all of your projects"
+						iconType={Octicons}
+						iconName="apps"
+						buttonText="Open projects list"
+						onPress={() => navigation.navigate('ProjectsList')}
+					/>
+					<TileCard
+						text="Not enjoying it here? You can sign out here!"
+						iconType={Octicons}
+						iconName="link-external"
+						buttonText="Sign out"
+						buttonLoading={loadingSignOut}
+						onPress={signOut}
+					/>
+					<Stack space={4}>
+						<UserCardInfo userObject={user} />
+						<Button
+							type={'card'}
+							onPress={() => navigation.navigate('EditProfile')}
+						>
+							Edit profile
+						</Button>
+					</Stack>
+				</Tiles>
+			</Stack>
+			<Inset />
+			<Inset />
+			<Inset />
+			<Inset />
+		</ScrollView>
+	);
+};
+
+App.propTypes = {
+	navigation: PropTypes.shape({
+		navigate: PropTypes.func,
+	}),
+};
+
+export default App;

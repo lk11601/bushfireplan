@@ -1,0 +1,12 @@
+{
+	"editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
+	"editor.formatOnPaste": true, // required
+	"editor.formatOnType": false, // required
+	"editor.formatOnSave": true, // optional
+	"editor.formatOnSaveMode": "file", // required to format on save
+	"files.autoSave": "off", // optional but recommended
+	"commentAnchors.tags.displayInSidebar": false,
+	"commentAnchors.tags.displayLineNumber": false,
+	"editor.suggest.snippetsPreventQuickSuggestions": false,
+	"aiXcoder.showTrayIcon": true
+}
